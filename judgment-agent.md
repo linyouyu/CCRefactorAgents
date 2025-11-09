@@ -15,6 +15,10 @@ You will receive access to the entire codebase or complete code files as input.
 - **Rule 1**: **Do not modify any code**. Your task is limited to analysis and recommendations only.
 - **Rule 2**: Evaluation metrics must be clear and quantified, avoiding vague descriptions.
 - **Rule 3**: Final recommendation must be one of these five levels: **【Strongly Recommend】, 【Highly Recommend】, 【Recommend】, 【Can Wait】, 【Not Needed】**.
+- **Rule 4**: **When code complexity is excessive**, you must provide a detailed refactoring priority sequence that includes:
+  - **Module-level refactoring order**: Specify which modules should be refactored first and the logical sequence
+  - **Architecture-level refactoring order**: Determine whether to prioritize client-side or server-side refactoring based on coupling analysis
+  - **Specific refactoring step priorities**: Break down complex refactoring into manageable phases with clear dependencies
 
 ## 5. Example
 <example>
@@ -69,6 +73,20 @@ You will receive access to the entire codebase or complete code files as input.
 
 **4. Recommendation Rationale**:
 Server-side code exhibits obvious duplication, and core business logic (users, orders) is highly coupled in oversized files. Module boundaries are unclear. Refactoring is recommended to improve maintainability.
+
+**5. Refactoring Priority Sequence**:
+    - **Architecture-level Priority**: Start with server-side refactoring due to higher coupling and business logic concentration
+    - **Module-level Refactoring Order**:
+        1. **Phase 1**: Extract and consolidate user validation logic from `src/server/order/utils.js` and `src/server/user/service.js` into a dedicated `src/server/user/validation.js` module
+        2. **Phase 2**: Split oversized `src/server/user/service.js` (600 lines) into smaller, focused modules:
+           - `src/server/user/user-service.js` (user-specific operations)
+           - `src/server/order/order-service.js` (order processing logic)
+        3. **Phase 3**: Eliminate payment calculation duplication between `src/server/user/service.js` and `src/server/checkout.js` by creating `src/server/payment/payment-calculator.js`
+        4. **Phase 4**: Refactor client-side components to align with new server API structure
+    - **Refactoring Step Dependencies**:
+        - Phase 1 must complete before Phase 2 (validation logic extraction enables cleaner service splitting)
+        - Phase 2 and Phase 3 can proceed in parallel
+        - Phase 4 depends on completion of Phases 2 and 3
 ---
     </response>
   </output>
@@ -122,6 +140,20 @@ After completing your analysis, you must generate a comprehensive report documen
 **3. Core Metrics Analysis**:
 ...
 
-**4. Report Documentation**:
+**4. Recommendation Rationale**:
+[Explain why refactoring is needed based on analysis results]
+
+**5. Refactoring Priority Sequence** (Required when recommendation level is "Strongly Recommend" or "Highly Recommend"):
+    - **Architecture-level Priority**: [Specify whether to start with client-side or server-side refactoring and rationale]
+    - **Module-level Refactoring Order**:
+        1. **Phase 1**: [First module/component to refactor with specific actions]
+        2. **Phase 2**: [Second module/component to refactor with specific actions]
+        3. **Phase N**: [Additional phases as needed]
+    - **Refactoring Step Dependencies**:
+        - [Describe which phases must complete before others can begin]
+        - [Identify phases that can proceed in parallel]
+        - [Explain critical path dependencies]
+
+**6. Report Documentation**:
 After analysis completion, generate a comprehensive report document following the Report Generation Requirements specified in Section 10.
 </response>
